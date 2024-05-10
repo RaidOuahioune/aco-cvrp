@@ -21,7 +21,7 @@ class CVPR:
             solutions = []
             solution_lengths = []
 
-            print(iteration)
+
             for ant in range(n_ants):
                 
                 # Initialize the ant's path
@@ -73,9 +73,12 @@ class CVPR:
                 solutions.append([car_paths])
                 solution_lengths.append(path_length)
                 # we update the global best progress
+                
                 if path_length < best_solution_length:
                     best_solution = car_paths
-                    best_path_length = path_length
+                    best_solution_length = path_length
+                print(f'Iteration {iteration+1}/{n_iterations} - Best path length: {best_solution_length} - current path length: {path_length}')
+                    
 
             # update the pheromone matrix after all ants have completed their paths
             self.pheromone *= evaporation_rate
@@ -86,4 +89,5 @@ class CVPR:
                         self.pheromone[sub_path[i], sub_path[i+1]] += Q/solution_length
                     self.pheromone[sub_path[-1], sub_path[0]] += Q/solution_length
 
-        return best_solution, best_path_length
+            
+        return best_solution, best_solution_length
