@@ -37,6 +37,7 @@ class CVPR:
                 car_capacities=[self.capacity for i in range(self.n_vehicules)]
                 # initialize the path length (cost)
                 path_length = 0            
+                car_path_lengths = [0 for i in range(self.n_vehicules)]
            
                 probabilities = np.zeros((self.n_vehicules,self.n_points))
                 for i in range(self.n_vehicules):                    
@@ -61,6 +62,7 @@ class CVPR:
                         visited[car_i_next_point] = True
                         car_paths[i].append(car_i_next_point)
 
+                        car_path_lengths[i] += self.graph[car_current_points[i], car_i_next_point]
                         path_length += self.graph[car_current_points[i], car_i_next_point]
                         car_current_points[i]=car_i_next_point
                         car_capacities[i]-=self.demande[car_i_next_point]
@@ -70,13 +72,18 @@ class CVPR:
                 
                 # the current ant has completed its path (visited all nodes)
                 # so we append the path and its cost to the paths and path_lengths lists
-                solutions.append([car_paths])
                 
-                # all cars shiuld return to the depot
-                for car_path in car_paths:
+
+                
+                # all cars should return to the depot
+                for i,car_path in enumerate(car_paths):
                     path_length += self.graph[car_path[-1], depot]
+                    car_path_lengths[i] += self.graph[car_path[-1], depot]
                     car_path.append(depot)
+                    car_path.append((car_path_lengths[i],self.capacity-car_capacities[i]))
+                
                 solution_lengths.append(path_length)
+                solutions.append(car_paths)
                 
                 # we update the global best progress
                 
@@ -88,12 +95,14 @@ class CVPR:
 
             # update the pheromone matrix after all ants have completed their paths
             self.pheromone *= evaporation_rate
-            
+                   
             for solution, solution_length in zip(solutions, solution_lengths):
-                for sub_path in solution[0] :
-                    for i in range(len(sub_path)-1):
+                for sub_path in solution :
+                    for i in range(len(sub_path)-2):                        
                         self.pheromone[sub_path[i], sub_path[i+1]] += Q/solution_length
-                    self.pheromone[sub_path[-1], sub_path[0]] += Q/solution_length
+                    self.pheromone[sub_path[-2], sub_path[0]] += Q/solution_length
+                    
+           
 
             
         return best_solution, best_solution_length

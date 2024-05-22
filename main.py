@@ -17,4 +17,7 @@ data=np.matrix( [
 
 cvpr=CVPR(data,demande=[0, 5, 20, 10, 20, 85,65, 30, 20, 70, 30],n_vehicules=6,capacity=100)
 
-print(cvpr.ant_colony_optimization(n_ants=50, n_iterations=10, alpha=1, beta=1, evaporation_rate=0.9, Q=1))
+print(cvpr.ant_colony_optimization(n_ants=50, n_iterations=2, alpha=1, beta=2, evaporation_rate=0.5, Q=10))
+
+print(f"demande: {cvpr.demande}")
+print(f"capacity: {cvpr.capacity}")
