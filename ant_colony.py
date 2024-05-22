@@ -71,7 +71,13 @@ class CVPR:
                 # the current ant has completed its path (visited all nodes)
                 # so we append the path and its cost to the paths and path_lengths lists
                 solutions.append([car_paths])
+                
+                # all cars shiuld return to the depot
+                for car_path in car_paths:
+                    path_length += self.graph[car_path[-1], depot]
+                    car_path.append(depot)
                 solution_lengths.append(path_length)
+                
                 # we update the global best progress
                 
                 if path_length < best_solution_length:
